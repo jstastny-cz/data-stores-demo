@@ -1,0 +1,65 @@
+[
+	{
+		"firstName":"Adam",
+		"lastName":"Albrecht",
+		"address":{
+			"street":"Avenue A",
+			"number":1,
+			"city":"Amsterdam"
+		}
+	},
+	{
+		"firstName":"Ben",
+		"lastName":"Brahms",
+		"address":{
+			"street":"Boulevard B",
+			"number":2,
+			"city":"Bologna"
+		}
+	},
+	{
+		"firstName":"Clint",
+		"lastName":"Cantrell",
+		"address":{
+			"street":"Crossroad C",
+			"number":3,
+			"city":"Caterham"
+		}
+	},
+	{
+		"firstName":"Dan",
+		"lastName":"Doyle",
+		"address":{
+			"street":"Driveway D",
+			"number":4,
+			"city":"Denver"
+		}
+	},
+	{
+		"firstName":"Evan",
+		"lastName":"Evans",
+		"address":{
+			"street":"Elsewhere E",
+			"number":5,
+			"city":"Everton"
+		}
+	},
+	{
+		"firstName":"Frank",
+		"lastName":"Finch",
+		"address":{
+			"street":"Faraway F",
+			"number":6,
+			"city":"Frankfurt"
+		}
+	},
+	{
+		"firstName":"Gery",
+		"lastName":"Goodguy",
+		"address":{
+			"street":"Groundfloor G",
+			"number":7,
+			"city":"Geneve"
+		}
+	}
+]
