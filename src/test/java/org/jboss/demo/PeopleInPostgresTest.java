@@ -34,8 +34,7 @@ public class PeopleInPostgresTest {
 		people = pfic.findAllSortedByLastNameDesc();
 		Assert.assertNotNull(people, "Returned list of people can't be null");
 		Assert.assertEquals(people.size(), 7, "There should have been 7 people.");
-		List<String> toReverse = new ArrayList<String>();
-		Collections.copy(toReverse, SORTED);
+		List<String> toReverse = new ArrayList<String>(SORTED);
 		Collections.reverse(toReverse);
 		Assert.assertEquals(people.stream().map((p) -> p.getLastName()).collect(Collectors.toList()), toReverse,
 				"Lines sorted in wrong order.");
