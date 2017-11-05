@@ -8,11 +8,11 @@ import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
-public class PeopleFinderInMongo implements PeopleFinder {
+public class PeopleInMongo implements PeopleFinder, PeopleWriter {
 
 	private String database;
 
-	public PeopleFinderInMongo(String database) {
+	public PeopleInMongo(String database) {
 		super();
 		this.database = database;
 	}
@@ -29,7 +29,7 @@ public class PeopleFinderInMongo implements PeopleFinder {
 	@Override
 	public List<Person> findAllSortedByLastNameDesc() {
 		try (MongoClient m = new MongoClient()) {
-			MongoDatabase d = m.getDatabase("data-store-demo");
+			MongoDatabase d = m.getDatabase(database);
 			List<Person> p = new ArrayList<>();
 			return d.getCollection("people").find().sort(new Document("lastName", -1)).map((a) -> getPerson(a)).into(p);
 		}
@@ -38,7 +38,7 @@ public class PeopleFinderInMongo implements PeopleFinder {
 	@Override
 	public Person findPersonWithHighestStreetNumber() {
 		try (MongoClient m = new MongoClient()) {
-			MongoDatabase d = m.getDatabase("data-store-demo");
+			MongoDatabase d = m.getDatabase(database);
 			return d.getCollection("people").find().sort(new Document("address.number", -1)).limit(1)
 					.map((a) -> getPerson(a)).first();
 		}
@@ -48,5 +48,21 @@ public class PeopleFinderInMongo implements PeopleFinder {
 		Document address = (Document) a.get("address");
 		return new Person(a.getString("firstName"), a.getString("lastName"), address.getString("street"),
 				address.getInteger("number"), address.getString("city"));
+	}
+
+	@Override
+	public void write(Person p) throws Exception {
+		try(MongoClient m = new MongoClient()){
+			MongoDatabase d = m.getDatabase(database);
+			Document doc = new Document();
+			doc.put("firstName", p.getFirstName());
+			doc.put("lastName", p.getLastName());
+			Document address = new Document();
+			address.put("street", p.getStreetName());
+			address.put("number", p.getStreetNumber());
+			address.put("city", p.getCity());
+			doc.put("address", address);
+			d.getCollection("people").insertOne(doc);
+		}
 	}
 }

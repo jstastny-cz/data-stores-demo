@@ -4,48 +4,49 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PeopleFinderInCsv implements PeopleFinder {
+public class PeopleInCsv implements PeopleFinder, PeopleWriter {
 
 	private File csv;
 
-	public PeopleFinderInCsv(File csv) {
+	public PeopleInCsv(File csv) {
 		if (csv == null || !csv.isFile()) {
 			throw new IllegalArgumentException("Invalid file passed to PeopleFinderInCsv");
 		}
 		this.csv = csv;
 	}
 
-	public List<Person> findAll() {
+	public List<Person> findAll() throws IOException {
 		List<Person> people = new ArrayList<>();
-		try {
-			List<String> lines = getDataLines();
-			people.addAll(lines.stream().map((s) -> getPerson(s)).collect(Collectors.toList()));
-		} catch (IOException e) {
-			// TODO: should handle properly
-			System.out.println(e.getMessage());
-		}
+		List<String> lines = getDataLines();
+		people.addAll(lines.stream().map((s) -> getPerson(s)).sorted().collect(Collectors.toList()));
 		return people;
 	}
 
-	public List<Person> findAllSortedByLastNameDesc() {
+	public List<Person> findAllSortedByLastNameDesc() throws Exception {
 		return findAll().stream().sorted((Person p1, Person p2) -> p2.getLastName().compareTo(p1.getLastName()))
 				.collect(Collectors.toList());
 	}
 
-	public Person findPersonWithHighestStreetNumber() {
+	public Person findPersonWithHighestStreetNumber() throws Exception {
 		return findAll().stream().max((Person p1, Person p2) -> p1.getStreetNumber() - p2.getStreetNumber()).get();
 	}
 
 	public List<String> getDataLines() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get(URI.create("file://" + csv.getAbsolutePath())));
+		List<String> lines = Files.readAllLines(getFilePath());
 		lines.remove(0);
 		return lines;
+	}
+
+	private Path getFilePath() {
+		return Paths.get(URI.create("file://" + csv.getAbsolutePath()));
 	}
 
 	public Person getPerson(String s) {
@@ -54,6 +55,13 @@ public class PeopleFinderInCsv implements PeopleFinder {
 				.collect(Collectors.toList());
 		return new Person(strings.get(0), strings.get(1), strings.get(2), Integer.valueOf(strings.get(3)),
 				strings.get(4));
+	}
+
+	@Override
+	public void write(Person p) throws IOException {
+		String line = p.getFirstName() + "," + p.getLastName() + "," + p.getStreetName() + "," + p.getStreetNumber()
+				+ "," + p.getCity() + "\n";
+		Files.write(getFilePath(), line.getBytes(), StandardOpenOption.APPEND);
 	}
 
 }

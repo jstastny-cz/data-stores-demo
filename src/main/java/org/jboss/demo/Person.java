@@ -1,6 +1,6 @@
 package org.jboss.demo;
 
-public class Person {
+public class Person implements Comparable<Person> {
 
 	private String firstName;
 	private String lastName;
@@ -157,6 +157,11 @@ public class Person {
 	public String toString() {
 		return "Person [firstName=" + firstName + ", lastName=" + lastName + ", streetName=" + streetName
 				+ ", streetNumber=" + streetNumber + ", city=" + city + "]";
+	}
+
+	@Override
+	public int compareTo(Person p) {
+		return (getLastName() + "|" + getFirstName()).compareTo(p.getLastName() + "|" + p.getFirstName());
 	}
 
 }
